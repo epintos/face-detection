@@ -1,4 +1,4 @@
-function outFaces = faceDetection(file, type) 
+function outFaces = faceDetection(file, type, data) 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % Function 'outFaces' returns the matrix with the information of 
 % face locations and gender. 
@@ -9,19 +9,42 @@ function outFaces = faceDetection(file, type)
 img = im2double(imread(file, type));
 
 effect_num=3;
-min_face=170;
-small_area=15;
+min_face=150;
+small_area=100;
 imgSize = size(img); 
 uint8Img = uint8(img); 
 gray_img=rgb2gray(uint8Img); 
 % get the image tranformed through YCbCr filter 
 filtered=ee368YCbCrbin(img,161.9964,-11.1051,22.9265,25.9997,4.3568,3.9479,2); 
+
+if isfield(data, 'step1')
+    axes(data.step1);
+    imshow(filtered);
+end
+
 % black isolated holes rejection  
 filtered=bwfill(filtered,'holes'); 
+if isfield(data, 'step2')
+    axes(data.step2);
+    imshow(filtered);
+end
+
 % white isolated holes less than small_area rejection 
 filtered=bwareaopen(filtered,small_area*10);  
+
+if isfield(data, 'step3')
+    axes(data.step3);
+    imshow(filtered);
+end
+
 % first erosion 
 filtered = imerode(filtered,ones(2*effect_num)); 
+
+if isfield(data, 'step4')
+    axes(data.step4);
+    imshow(filtered);
+end
+
 % edge detection with the Roberts method with sensitivity 0.1 
 edge_img=edge(gray_img,'roberts',0.2); 
 % final binary edge image 
@@ -30,10 +53,29 @@ edge_img=~edge_img;
 filtered=255*(double(filtered) & double(edge_img)); % double 
 % second erosion 
 filtered=imerode(filtered,ones(effect_num)); 
+
+if isfield(data, 'step5')
+    axes(data.step5);
+    imshow(filtered);
+end
+
 % black isolated holes rejection 
 filtered=bwfill(filtered,'hole'); 
+
+if isfield(data, 'step6')
+    axes(data.step6);
+    imshow(filtered);
+end
+
 % small areas less than the minumum area of face rejection 
 filtered=bwareaopen(filtered,min_face); 
+
+if isfield(data, 'step7')
+    axes(data.step7);
+    imshow(filtered);
+end
+
+
 % group labeling in the filtered image 
 [segments, num_segments] = bwlabel(filtered); 
 
