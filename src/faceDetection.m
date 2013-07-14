@@ -81,26 +81,25 @@ if isfield(handles, 'step4')
 end
 
 % edge detection with the Roberts method with sensitivity 0.1 
-edge_img=edge(gray_img,'roberts',0.2); 
+edge_img=edge(gray_img,'roberts'); 
 % final binary edge image 
 edge_img=~edge_img; 
+
+if isfield(handles, 'step5')
+    tmp = edge(gray_img,'roberts');
+    axes(handles.step5);
+    imshow(tmp);
+    detector.steps.step5 = tmp;
+    if (detector.params.show_steps)
+        axes(handles.target);
+        imshow(tmp); 
+    end
+end
+
 % integeration of two images, edge + filtered image 
 filtered=255*(double(filtered) & double(edge_img)); % double 
 % second erosion 
 filtered=imerode(filtered,ones(effect_num)); 
-
-if isfield(handles, 'step5')
-    axes(handles.step5);
-    imshow(filtered);
-    detector.steps.step5 = filtered;
-    if (detector.params.show_steps)
-        axes(handles.target);
-        imshow(filtered); 
-    end
-end
-
-% black isolated holes rejection 
-filtered=bwfill(filtered,'hole'); 
 
 if isfield(handles, 'step6')
     axes(handles.step6);
@@ -112,13 +111,26 @@ if isfield(handles, 'step6')
     end
 end
 
-% small areas less than the minumum area of face rejection 
-filtered=bwareaopen(filtered,min_face); 
+% black isolated holes rejection 
+filtered=bwfill(filtered,'hole'); 
 
 if isfield(handles, 'step7')
     axes(handles.step7);
     imshow(filtered);
     detector.steps.step7 = filtered;
+    if (detector.params.show_steps)
+        axes(handles.target);
+        imshow(filtered); 
+    end
+end
+
+% small areas less than the minumum area of face rejection 
+filtered=bwareaopen(filtered,min_face); 
+
+if isfield(handles, 'step8')
+    axes(handles.step8);
+    imshow(filtered);
+    detector.steps.step8 = filtered;
     if (detector.params.show_steps)
         axes(handles.target);
         imshow(filtered); 
