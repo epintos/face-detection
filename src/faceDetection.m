@@ -9,6 +9,10 @@ global detector;
 % coefficients 
 img = im2double(imread(file, type));
 
+if (isfield(detector.params, 'addnoise') && detector.params.addnoise == 1)
+    img = imnoise(img,'gaussian',0,0.001);
+end
+    
 effect_num=2;
 if isfield(detector.params,'effect_num')
    effect_num = detector.params.effect_num

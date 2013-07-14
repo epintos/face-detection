@@ -3,7 +3,12 @@ function x = detect_faces(img, f, handles, params)
     res = faceDetection(img, f, handles)
     axes(handles.target);
     rgb = im2double(imread(img, f));
+    if (isfield(detector.params, 'addnoise') && detector.params.addnoise == 1)
+        rgb = imnoise(rgb,'gaussian',0,0.001);
+    end
 	imshow(rgb);
+   
+    detector.params.target = rgb;
     detector.params.res = res;
     plot_squares(res(:,2), res(:,1), res(:,5))
 %  	scatter(data(:,2),data(:,1), 'g', '*');
