@@ -85,12 +85,12 @@ if isfield(handles, 'step4')
 end
 
 % edge detection with the Roberts method with sensitivity 0.1 
-edge_img=edge(gray_img,'roberts'); 
+edge_img=edge(gray_img,'roberts', [], 'thinning'); 
 % final binary edge image 
 edge_img=~edge_img; 
 
 if isfield(handles, 'step5')
-    tmp = edge(gray_img,'roberts');
+    tmp = edge(gray_img,'roberts', [], 'thinning');
     axes(handles.step5);
     imshow(tmp);
     detector.steps.step5 = tmp;
