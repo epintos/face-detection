@@ -164,13 +164,13 @@ for k=1:num_box,
     testImg = testImg/avgBri; 
      
     % test images are compared to the eigen images or femaale average images 
-%     corr = ee368imgMatch(testImg, hWdth); 
+    corr = ee368imgMatch(testImg, hWdth); 
     
-%     fCorr = ee368imgMatchFe(testImg, hWdth); 
+    fCorr = ee368imgMatchFe(testImg, hWdth); 
     
-%     outFaces = [outFaces; ctr 1 corr/boxDist(k), hWdth, fCorr]; 
+    outFaces = [outFaces; ctr 1 corr/boxDist(k), hWdth, fCorr]; 
     
-    outFaces = [outFaces; ctr 1 1, hWdth, [1, 1, 1]]; 
+%     outFaces = [outFaces; ctr 1 1, hWdth, [1, 1, 1]]; 
     
 %     imwrite(testImg, strcat('../garbage/img', num2str(corr),'.jpg'));
 end 

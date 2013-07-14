@@ -58,6 +58,10 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
+set(handles.text2, 'String', 150);
+set(handles.text4, 'String', 1);
+set(handles.text6, 'String', 50);
+
 % UIWAIT makes atifinal wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
@@ -149,7 +153,6 @@ function pushbutton1_Callback(hObject, eventdata, handles)
     detector.params = {}
     detector.params.show_steps  = 1;
     detector.params.show_boxes_always  = 1;
-    set(handles.text2, 'String', 150)
     detector.filename = filename;
     detector.fileext = ext(2:length(ext));
     handles=guidata(hObject); 
