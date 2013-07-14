@@ -22,7 +22,7 @@ function varargout = atifinal(varargin)
 
 % Edit the above text to modify the response to help atifinal
 
-% Last Modified by GUIDE v2.5 14-Jul-2013 02:44:43
+% Last Modified by GUIDE v2.5 14-Jul-2013 18:09:43
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -138,6 +138,7 @@ function process(hObject)
     global detector
     detector.data = guidata(hObject); 
     detector.steps = {}
+    detector.params.addnoise = get(detector.data.addnoise_cb, 'Value')
     detect_faces(detector.filename, detector.fileext, detector.data);
 
 % --- Executes on button press in pushbutton1.
@@ -151,6 +152,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
     [pathstr, name, ext] = fileparts(file);
     detector = {};
     detector.params = {}
+    detector.params.addnoise = 0;
     detector.params.show_steps  = 1;
     detector.params.show_boxes_always  = 1;
     detector.filename = filename;
@@ -377,3 +379,29 @@ function slider9_CreateFcn(hObject, eventdata, handles)
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
+
+% --- Executes on button press in pushbutton14.
+function pushbutton14_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton14 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    
+
+
+% --- Executes on button press in addnoise_cb.
+function addnoise_cb_Callback(hObject, eventdata, handles)
+% hObject    handle to addnoise_cb (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of addnoise_cb
+
+
+% --- Executes on button press in pushbutton15.
+function pushbutton15_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton15 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    global detector
+    h = guidata(hObject)
+    handleClick(h.target, detector.params.target)
