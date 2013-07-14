@@ -1,4 +1,5 @@
-function outFaces = faceDetection(file, type, data) 
+function outFaces = faceDetection(file, type, handles, params) 
+global detector;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % Function 'outFaces' returns the matrix with the information of 
 % face locations and gender. 
@@ -8,41 +9,75 @@ function outFaces = faceDetection(file, type, data)
 % coefficients 
 img = im2double(imread(file, type));
 
-effect_num=3;
+effect_num=2;
+if isfield(detector.params,'effect_num')
+   effect_num = detector.params.effect_num
+end
+
+% Minimum face size
 min_face=150;
+if isfield(detector.params,'min_face')
+   min_face = detector.params.min_face
+end
+
 small_area=100;
+
+if isfield(detector.params,'small_area')
+   small_area = detector.params.small_area
+end
+
 imgSize = size(img); 
 uint8Img = uint8(img); 
 gray_img=rgb2gray(uint8Img); 
 % get the image tranformed through YCbCr filter 
 filtered=ee368YCbCrbin(img,161.9964,-11.1051,22.9265,25.9997,4.3568,3.9479,2); 
 
-if isfield(data, 'step1')
-    axes(data.step1);
-    imshow(filtered);
+if isfield(handles, 'step1')
+    axes(handles.step1);
+    imshow(filtered); 
+    detector.steps.step1 = filtered;
+    if (detector.params.show_steps)
+        axes(handles.target);
+        imshow(filtered); 
+    end
 end
 
 % black isolated holes rejection  
 filtered=bwfill(filtered,'holes'); 
-if isfield(data, 'step2')
-    axes(data.step2);
+if isfield(handles, 'step2')
+    axes(handles.step2);
     imshow(filtered);
+    detector.steps.step2 = filtered;
+    if (detector.params.show_steps)
+        axes(handles.target);
+        imshow(filtered); 
+    end
 end
 
 % white isolated holes less than small_area rejection 
 filtered=bwareaopen(filtered,small_area*10);  
 
-if isfield(data, 'step3')
-    axes(data.step3);
+if isfield(handles, 'step3')
+    axes(handles.step3);
     imshow(filtered);
+    detector.steps.step3 = filtered;
+    if (detector.params.show_steps)
+        axes(handles.target);
+        imshow(filtered); 
+    end
 end
 
 % first erosion 
 filtered = imerode(filtered,ones(2*effect_num)); 
 
-if isfield(data, 'step4')
-    axes(data.step4);
+if isfield(handles, 'step4')
+    axes(handles.step4);
     imshow(filtered);
+    detector.steps.step4 = filtered;
+    if (detector.params.show_steps)
+        axes(handles.target);
+        imshow(filtered); 
+    end
 end
 
 % edge detection with the Roberts method with sensitivity 0.1 
@@ -54,25 +89,40 @@ filtered=255*(double(filtered) & double(edge_img)); % double
 % second erosion 
 filtered=imerode(filtered,ones(effect_num)); 
 
-if isfield(data, 'step5')
-    axes(data.step5);
+if isfield(handles, 'step5')
+    axes(handles.step5);
     imshow(filtered);
+    detector.steps.step5 = filtered;
+    if (detector.params.show_steps)
+        axes(handles.target);
+        imshow(filtered); 
+    end
 end
 
 % black isolated holes rejection 
 filtered=bwfill(filtered,'hole'); 
 
-if isfield(data, 'step6')
-    axes(data.step6);
+if isfield(handles, 'step6')
+    axes(handles.step6);
     imshow(filtered);
+    detector.steps.step6 = filtered;
+    if (detector.params.show_steps)
+        axes(handles.target);
+        imshow(filtered); 
+    end
 end
 
 % small areas less than the minumum area of face rejection 
 filtered=bwareaopen(filtered,min_face); 
 
-if isfield(data, 'step7')
-    axes(data.step7);
+if isfield(handles, 'step7')
+    axes(handles.step7);
     imshow(filtered);
+    detector.steps.step7 = filtered;
+    if (detector.params.show_steps)
+        axes(handles.target);
+        imshow(filtered); 
+    end
 end
 
 
@@ -114,11 +164,13 @@ for k=1:num_box,
     testImg = testImg/avgBri; 
      
     % test images are compared to the eigen images or femaale average images 
-    corr = ee368imgMatch(testImg, hWdth); 
+%     corr = ee368imgMatch(testImg, hWdth); 
     
-    fCorr = ee368imgMatchFe(testImg, hWdth); 
+%     fCorr = ee368imgMatchFe(testImg, hWdth); 
     
-    outFaces = [outFaces; ctr 1 corr/boxDist(k), hWdth, fCorr]; 
+%     outFaces = [outFaces; ctr 1 corr/boxDist(k), hWdth, fCorr]; 
+    
+    outFaces = [outFaces; ctr 1 1, hWdth, [1, 1, 1]]; 
     
 %     imwrite(testImg, strcat('../garbage/img', num2str(corr),'.jpg'));
 end 

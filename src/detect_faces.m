@@ -1,11 +1,15 @@
-function x = detect_faces(img, f, data)
-	res = faceDetection(img, f, data)
-    axis(data.step8);
-    rgb = imread(img);
+function x = detect_faces(img, f, handles, params)
+    global detector;
+    res = faceDetection(img, f, handles)
+    axes(handles.step8);
+    rgb = im2double(imread(img, f));
     imshow(rgb);
     plot_squares(res(:,2), res(:,1), res(:,5))
-    axis(data.step1);
+    detector.steps.step8 = rgb;
+    axes(handles.target);
+    rgb = im2double(imread(img, f));
 	imshow(rgb);
+    detector.params.res = res;
     plot_squares(res(:,2), res(:,1), res(:,5))
 %  	scatter(data(:,2),data(:,1), 'g', '*');
 	% title('Imagen de deteccion');
